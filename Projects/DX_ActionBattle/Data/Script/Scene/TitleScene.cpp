@@ -27,6 +27,10 @@ TitleScene::TitleScene()
 	m_bgColorG = 0x1d;
 	m_bgColorB = 0x8d;
 	SoundManager::Instance().loopPlay("Title");
+
+	// カメラ初期化
+	m_camera.Init(VGet(0, 80, -180));
+	m_light.Init(m_camera.GetPos(), m_camera.GetTargetPos());
 }
 
 TitleScene::~TitleScene()

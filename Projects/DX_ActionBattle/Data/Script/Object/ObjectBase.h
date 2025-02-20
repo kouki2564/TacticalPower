@@ -148,6 +148,9 @@ public:
 	void SetIsUse(bool isUse) { m_isUse = isUse; }
 	bool GetIsUse() { return m_isUse; }
 
+	// とりあえず移動量とか受け取りたい
+	VECTOR GetResVec() { return m_updateVec; }
+
 protected:
 
 	// レベル
@@ -190,5 +193,7 @@ protected:
 	bool m_isLock = false;
 
 	bool m_isUse = true;
+
+	VECTOR m_updateVec = VZero();
 };
 

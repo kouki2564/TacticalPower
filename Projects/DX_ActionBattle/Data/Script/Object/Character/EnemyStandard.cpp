@@ -234,7 +234,7 @@ bool EnemyStandard::SetDamagePoint(float damagePoint)
 	// 反映
 	if (!m_isLock) m_parameter.SetDamage(resDamagePoint);
 
-	EffectManager::Instance().PlayEffect("HitS", m_pos, m_dir);
+	EffectManager::Instance().PlayEffect("HitS", m_collider.centerPos, m_dir);
 
 	// 一応HPのマイナス化防止とやられた判定をここでとる
 	if (m_parameter.GetPalameter(0) <= 0)

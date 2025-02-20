@@ -124,6 +124,14 @@ void EffectManager::MoveEffectPos(std::string name, VECTOR pos, VECTOR dir)
 	UpdateEffekseer3D();
 }
 
+void EffectManager::StopEffect(std::string name)
+{
+	if (IsEffekseer3DEffectPlaying(m_effects[name].playinghandle) == 0)
+	{
+		StopEffekseer3DEffect(m_effects[name].playinghandle);
+	}
+}
+
 bool EffectManager::GetIsPlaying(std::string name)
 {
 	auto is = IsEffekseer3DEffectPlaying(m_effects[name].playinghandle);

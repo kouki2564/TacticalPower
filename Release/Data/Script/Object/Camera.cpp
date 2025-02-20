@@ -123,6 +123,8 @@ void Camera::SetTargetPos(VECTOR playerPos, VECTOR targetPos)
 			VECTOR dir = VNorm(VGet(-playerToTargetView.x, -cameraToViewY, -playerToTargetView.z));
 			float range = VSize(VSub(playerPos, targetPos)) + kMoveRange;
 			VECTOR moveVec = VScale(dir, range);
+			// プレイヤーの移動に合わせたカメラの移動
+			// moveVec = VAdd(moveVec, m_targetMove);
 			m_targetCameraPos = VAdd(m_targetViewPos, moveVec);
 		}
 		// 非ターゲット時
@@ -210,6 +212,10 @@ void Camera::UpdatePos()
 		m_viewPos = VAdd(m_viewPos, vibrationVec);
 	}
 	m_pos = m_rotate.Move(m_viewPos, m_pos);
+	if (m_view == ViewMode::TPS)
+	{
+		m_pos = VAdd(m_pos, m_targetMove);
+	}
 	m_targetCameraPos = m_pos;
 	// カメラの座標とターゲット座標の反映（暫定で上ベクトルはy軸方向に固定）
 	SetCameraPositionAndTargetAndUpVec(m_pos, m_viewPos, m_dirY);

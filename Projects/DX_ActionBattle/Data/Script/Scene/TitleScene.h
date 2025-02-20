@@ -59,5 +59,7 @@ private:
     int m_bgColorG;
 	int m_bgColorB;
 
+	std::vector<int> m_weaponHandle;
+
 };
 

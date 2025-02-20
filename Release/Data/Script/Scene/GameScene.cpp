@@ -43,6 +43,9 @@ namespace
 
 	constexpr int kEndingTime = 30;
 	constexpr int kEndingMaxAlpha = 100;
+
+	constexpr int kStageRange = 140;
+	constexpr int kStageMoveLine = 130;
 }
 
 GameScene::GameScene()
@@ -172,7 +175,7 @@ void GameScene::InitScene()
 	InitEnemyData(m_nowStageNum[0], m_nowStageNum[1]);
 	SetEnemyData(m_nowStageNum[0], m_nowStageNum[1]);
 
-	m_camera.ChangeViewMode(ViewMode::QUARTER, m_objects["Player"] ->GetPos(), m_objects["Player"] ->GetDir());
+	m_camera.ChangeViewMode(ViewMode::QUARTER, m_objects["Player"]->GetPos(), m_objects["Player"]->GetDir());
 	// m_camera.SetTargetPos(m_objects["Player"]->GetPos(), m_objects["Mutant"]->GetCollider().pos[1]);
 	m_camera.SetIsCameraRotate(false);
 
@@ -224,6 +227,13 @@ void GameScene::UpdateScene()
 				{
 					auto& t = *it;
 					t.second->ApplyUpdating();
+
+					// カメラにプレイヤーの移動量の設定
+					if (t.first == "Player")
+					{
+						m_camera.SetTargetMove(t.second->GetResVec());
+					}
+
 					if (t.second->GetIsDelete())
 					{
 						if (t.first == "Player")
@@ -569,21 +579,21 @@ void GameScene::CollisionUpdate()
 			{
 				auto pos = t1.second ->GetPos();
 				// 壁
-				if (pos.x < -130)
+				if (pos.x < -kStageMoveLine)
 				{
-					move.x = -130 - pos.x;
+					move.x = -kStageMoveLine - pos.x;
 				}
-				if (pos.x > 130)
+				if (pos.x > kStageMoveLine)
 				{
-					move.x = 130 - pos.x;
+					move.x = kStageMoveLine - pos.x;
 				}
-				if (pos.z < -130)
+				if (pos.z < -kStageMoveLine)
 				{
-					move.z = -130 - pos.z;
+					move.z = -kStageMoveLine - pos.z;
 				}
-				if (pos.z > 130)
+				if (pos.z > kStageMoveLine)
 				{
-					move.z = 130 - pos.z;
+					move.z = kStageMoveLine - pos.z;
 				}
 			}
 			// ボスステージ
@@ -775,8 +785,9 @@ void GameScene::ChackMoveMap()
 		// どの方向に進めるかのチェック
 		if ((m_nowStageNum[0] > 0 && m_nowStageNum[0] < 4) && m_nowStageNum[1] > 0)															// 左
 		{
+			EffectManager::Instance().StopEffect("SistemWall_Left");
 			// プレイヤーの座標チェック
-			if (pos.x <= -130 && abs(pos.z) < 15)
+			if (pos.x <= -kStageMoveLine && abs(pos.z) < 15)
 			{
 				m_moveRoomDir = LEFT;
 				ChangeState(SceneState::END);
@@ -784,8 +795,9 @@ void GameScene::ChackMoveMap()
 		}
 		if ((m_nowStageNum[0] > 0 && m_nowStageNum[0] < 4) && m_nowStageNum[1] < GameData::kStageMaxRow - 1)								// 右
 		{
+			EffectManager::Instance().StopEffect("SistemWall_Right");
 			// プレイヤーの座標チェック
-			if (pos.x >= 130 && abs(pos.z) < 15)
+			if (pos.x >= kStageMoveLine && abs(pos.z) < 15)
 			{
 				m_moveRoomDir = RIGHT;
 				ChangeState(SceneState::END);
@@ -793,8 +805,9 @@ void GameScene::ChackMoveMap()
 		}
 		if (m_nowStageNum[0] > 0 && !(m_nowStageNum[0] == 1 && m_nowStageNum[1] != 1))														// 奥
 		{
+			EffectManager::Instance().StopEffect("SistemWall_Flont");
 			// プレイヤーの座標チェック
-			if (abs(pos.x) < 15 && pos.z >= 130)
+			if (abs(pos.x) < 15 && pos.z >= kStageMoveLine)
 			{
 				m_moveRoomDir = UP;
 				ChangeState(SceneState::END);
@@ -802,8 +815,9 @@ void GameScene::ChackMoveMap()
 		}
 		if (m_nowStageNum[0] < GameData::kStageMaxLine - 1 && !(m_nowStageNum[0] == GameData::kStageMaxLine - 2 && m_nowStageNum[1] != 1))	// 手前
 		{
+			EffectManager::Instance().StopEffect("SistemWall_Back");
 			// プレイヤーの座標チェック
-			if (abs(pos.x) < 15 && pos.z <= -130)
+			if (abs(pos.x) < 15 && pos.z <= -kStageMoveLine)
 			{
 				m_moveRoomDir = DOWN;
 				ChangeState(SceneState::END);
@@ -876,6 +890,11 @@ void GameScene::InitStageData(int stageLine, int stageRow)
 
 void GameScene::InitEnemyData(int stageLine, int stageRow)
 {
+	EffectManager::Instance().StopEffect("SistemWall_Flont");
+	EffectManager::Instance().StopEffect("SistemWall_Back");
+	EffectManager::Instance().StopEffect("SistemWall_Left");
+	EffectManager::Instance().StopEffect("SistemWall_Right");
+
 	// 前データを削除
 	m_enemyData.clear();
 
@@ -906,6 +925,10 @@ void GameScene::InitEnemyData(int stageLine, int stageRow)
 			m_enemyData.push_back(EnemyKind::TANK);
 			m_enemyData.push_back(EnemyKind::TANK);
 		}
+		EffectManager::Instance().PlayEffect("SistemWall_Flont", VGet(0, 0, kStageRange), VGet(1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Back", VGet(0, 0, -kStageRange), VGet(-1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Left", VGet(-kStageRange, 0, 0), VGet(0, 0, -1));
+		EffectManager::Instance().PlayEffect("SistemWall_Right", VGet(kStageRange, 0, 0), VGet(0, 0, 1));
 	}
 	else if (stageLine == 2)
 	{
@@ -926,6 +949,10 @@ void GameScene::InitEnemyData(int stageLine, int stageRow)
 			m_enemyData.push_back(EnemyKind::STANDARD);
 			m_enemyData.push_back(EnemyKind::TANK);
 		}
+		EffectManager::Instance().PlayEffect("SistemWall_Flont", VGet(0, 0, kStageRange), VGet(1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Back", VGet(0, 0, -kStageRange), VGet(-1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Left", VGet(-kStageRange, 0, 0), VGet(0, 0, -1));
+		EffectManager::Instance().PlayEffect("SistemWall_Right", VGet(kStageRange, 0, 0), VGet(0, 0, 1));
 	}
 	else if (stageLine == 3)
 	{
@@ -943,6 +970,10 @@ void GameScene::InitEnemyData(int stageLine, int stageRow)
 			m_enemyData.push_back(EnemyKind::STANDARD);
 			m_enemyData.push_back(EnemyKind::TANK);
 		}
+		EffectManager::Instance().PlayEffect("SistemWall_Flont", VGet(0, 0, kStageRange), VGet(1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Back", VGet(0, 0, -kStageRange), VGet(-1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Left", VGet(-kStageRange, 0, 0), VGet(0, 0, -1));
+		EffectManager::Instance().PlayEffect("SistemWall_Right", VGet(kStageRange, 0, 0), VGet(0, 0, 1));
 	}
 	// チュートリアル部屋
 	else if (stageLine == 4)
@@ -951,6 +982,9 @@ void GameScene::InitEnemyData(int stageLine, int stageRow)
 		{
 			m_enemyData.push_back(EnemyKind::STANDARD);
 		}
+		EffectManager::Instance().PlayEffect("SistemWall_Back", VGet(0, 0, -kStageRange), VGet(-1, 0, 0));
+		EffectManager::Instance().PlayEffect("SistemWall_Left", VGet(-kStageRange, 0, 0), VGet(0, 0, -1));
+		EffectManager::Instance().PlayEffect("SistemWall_Right", VGet(kStageRange, 0, 0), VGet(0, 0, 1));
 	}
 }
 
@@ -1044,6 +1078,7 @@ void GameScene::PlayerStatusPop()
 	}
 }
 
+// マジックナンバーの塊
 void GameScene::DrawParameter()
 {
 	// フォント変更
@@ -1066,10 +1101,11 @@ void GameScene::DrawParameter()
 	DrawFormatString2F(GameData::kScreenWidth * 0.23f, GameData::kScreenHeight * 0.07f, color, edgeColor, "LV.%d", playerAgiLevel);
 }
 
+// マジックナンバーの塊
 void GameScene::DrawFloor()
 {
 	// アルファ値の設定
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
 
 	DrawBoxAA(GameData::kScreenWidth -50 - 10 - 100,	20,			GameData::kScreenWidth - 50 - 10 - 50,		20 + 50,	   GetColor(200, 200, 200), true);
 																																		

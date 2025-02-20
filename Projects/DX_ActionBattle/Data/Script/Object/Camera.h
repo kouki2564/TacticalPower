@@ -65,6 +65,7 @@ public:
 
 	void SetVibration(int frame);
 
+	void SetTargetMove(VECTOR vec) { m_targetMove = vec; }
 private:
 
 	// 注視する
@@ -136,5 +137,7 @@ private:
 	float m_vibrationRange = 0.0f;
 	// カメラの振動の左右フラグ
 	bool m_isVibrationLeft = false;
+
+	VECTOR m_targetMove = VZero();
 };
 

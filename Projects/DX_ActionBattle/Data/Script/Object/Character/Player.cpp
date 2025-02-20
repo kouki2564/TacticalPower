@@ -296,7 +296,7 @@ bool Player::SetDamagePoint(float damagePoint)
 		m_parameter.SetDamage(resDamagePoint);
 		SoundManager::Instance().OnePlay("Hit");
 
-		EffectManager::Instance().PlayEffect("HitP", m_pos, m_dir);
+		EffectManager::Instance().PlayEffect("HitP", m_collider.centerPos, m_dir);
 		
 
 		// ダメージ表示
@@ -782,10 +782,19 @@ void Player::AttackUpdate()
 			if (m_weapon->colliders[0].isChackOther)
 			{
 				// DrawLine3D(m_lastWeaponPos, m_weapon->colliders[0].pos[1], GetColor(123,255,255));
-				DrawCapsule3D(m_lastWeaponPos, m_weapon->colliders[0].pos[1], 0.5f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), true);
-				DrawCapsule3D(m_weapon->colliders[0].pos[0], m_weapon->colliders[0].pos[1], 0.01f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), false);
+				// 頂点
+				DrawCapsule3D(m_lastWeaponPos[1], m_weapon->colliders[0].pos[1], 0.5f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), true);
+				// 導線
+				for (int i = 0; i < 30; i++)
+				{
+					float rate = i / 30.0f;
+					auto posStart = VAdd(m_lastWeaponPos[0], VScale(VSub(m_lastWeaponPos[1], m_lastWeaponPos[0]), rate));
+					auto posEnd = VAdd(m_weapon->colliders[0].pos[0], VScale(VSub(m_weapon->colliders[0].pos[1], m_weapon->colliders[0].pos[0]), rate));
+					DrawCapsule3D(posStart, posEnd, 0.01f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), false);
+				}
 			}
-			m_lastWeaponPos = m_weapon->colliders[0].pos[1];
+			m_lastWeaponPos[0] = m_weapon->colliders[0].pos[0];
+			m_lastWeaponPos[1] = m_weapon->colliders[0].pos[1];
 		}
 		else if (m_weapon->kind == Weapon::AXE)
 		{
@@ -819,10 +828,19 @@ void Player::AttackUpdate()
 			if (m_weapon->colliders[0].isChackOther)
 			{
 				// DrawLine3D(m_lastWeaponPos, m_weapon->colliders[0].pos[1], GetColor(123,255,255));
-				DrawCapsule3D(m_lastWeaponPos, m_weapon->colliders[0].pos[1], 0.5f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), true);
-				DrawCapsule3D(m_weapon->colliders[0].pos[0], m_weapon->colliders[0].pos[1], 0.01f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), false);
+				// 頂点
+				DrawCapsule3D(m_lastWeaponPos[1], m_weapon->colliders[0].pos[1], 0.5f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), true);
+				// 導線
+				for (int i = 0; i < 30; i++)
+				{
+					float rate = i / 30.0f;
+					auto posStart = VAdd(m_lastWeaponPos[0], VScale(VSub(m_lastWeaponPos[1], m_lastWeaponPos[0]), rate));
+					auto posEnd = VAdd(m_weapon->colliders[0].pos[0], VScale(VSub(m_weapon->colliders[0].pos[1], m_weapon->colliders[0].pos[0]), rate));
+					DrawCapsule3D(posStart, posEnd, 0.01f, 3, GetColor(123, 255, 255), GetColor(255, 255, 255), false);
+				}
 			}
-			m_lastWeaponPos = m_weapon->colliders[0].pos[1];
+			m_lastWeaponPos[0] = m_weapon->colliders[0].pos[0];
+			m_lastWeaponPos[1] = m_weapon->colliders[0].pos[1];
 		}
 		else if (m_weapon->kind == Weapon::MAGIC)
 		{
@@ -917,10 +935,11 @@ void Player::DodgeUpdate()
 void Player::ApplyMoving()
 {
 	m_dir = m_physics.GetDir();
-	auto moveVec = m_physics.GetUpdateVec();
+	m_updateVec = m_physics.GetUpdateVec();
+	// auto vec = m_physics.GetUpdateVec();
 	// 座標反映
-	m_pos = VAdd(m_pos, moveVec);
-	m_collider.ColliderUpdate(moveVec);
+	m_pos = VAdd(m_pos, m_updateVec);
+	m_collider.ColliderUpdate(m_updateVec);
 }
 
 void Player::PrecedInputButton()

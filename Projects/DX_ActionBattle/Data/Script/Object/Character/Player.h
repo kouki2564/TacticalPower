@@ -100,7 +100,7 @@ private:
 
 	int startPos = DOWN;
 
-	VECTOR m_lastWeaponPos = VZero();
+    VECTOR m_lastWeaponPos[2] = { VZero() };
 
 };
 

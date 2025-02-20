@@ -209,7 +209,7 @@ bool EnemyTank::SetDamagePoint(float damagePoint)
 		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 3.5f, 30, m_cameraDir);
 	}
 
-	EffectManager::Instance().PlayEffect("HitT", m_pos, m_dir);
+	EffectManager::Instance().PlayEffect("HitT", m_collider.centerPos, m_dir);
 	
 	// 一応HPのマイナス化防止とやられた判定をここでとる
 	if (m_parameter.GetPalameter(0) <= 0)

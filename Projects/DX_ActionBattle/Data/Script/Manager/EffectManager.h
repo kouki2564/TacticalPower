@@ -43,6 +43,8 @@ public:
 
 	void MoveEffectPos(std::string name, VECTOR pos, VECTOR dir);
 
+	void StopEffect(std::string name);
+
 	bool GetIsPlaying(std::string name);
 
 private:

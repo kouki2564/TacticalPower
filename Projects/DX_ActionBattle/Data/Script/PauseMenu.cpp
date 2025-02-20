@@ -177,6 +177,7 @@ void PauseMenu::Close()
 
 		// ポーズ画面の終了
 		m_isPause = false;
+
 	}
 }
 

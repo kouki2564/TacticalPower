@@ -81,7 +81,7 @@ private:
 
 
 	// ポーズ画面展開フラグ
-	bool m_isSwitchPause;
+	bool m_isSwitchPause = false;
 
 	// メニューの選択
 	void SelectMenu();
@@ -89,16 +89,16 @@ private:
 	void DrawStrings();
 
 	// ポーズ中かどうか
-	bool m_isPause;
+	bool m_isPause = false;
 
 	// ポーズメニューの表示フラグ
-	bool m_isPopUp;
+	bool m_isPopUp = false;
 
 	// 操作可能フラグ
-	bool m_isOpe;
+	bool m_isOpe = false;
 
 	// ポーズメニューの選択フラグ
-	bool m_isSelect;
+	bool m_isSelect = false;
 	// ポーズメニューの状態
 	PauseMenuState m_pauseMenuState = PauseMenuState::STATUS;
 

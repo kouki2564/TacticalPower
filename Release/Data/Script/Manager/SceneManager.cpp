@@ -17,6 +17,10 @@ SceneManager::SceneManager() :
 	SoundManager::Instance().RegisterSound("Hit", LoadSoundMem("Data/Sound/SE_Hit.mp3"), 150);
 	SoundManager::Instance().RegisterSound("decision", LoadSoundMem("Data/Sound/SE_decision.mp3"), 150);
 
+	EffectManager::Instance().RegisterEffect("SistemWall_Flont", LoadEffekseerEffect("Data/Effect/SistemWall.efkefc", 10.0f), VGet(0, 0, 0), VGet(0, 0, 0));
+	EffectManager::Instance().RegisterEffect("SistemWall_Back", LoadEffekseerEffect("Data/Effect/SistemWall.efkefc", 10.0f), VGet(0, 0, 0), VGet(0, 0, 0));
+	EffectManager::Instance().RegisterEffect("SistemWall_Right", LoadEffekseerEffect("Data/Effect/SistemWall.efkefc", 10.0f), VGet(0, 0, 0), VGet(0, 0, 0));
+	EffectManager::Instance().RegisterEffect("SistemWall_Left", LoadEffekseerEffect("Data/Effect/SistemWall.efkefc", 10.0f), VGet(0, 0, 0), VGet(0, 0, 0));
 
 #ifdef _DEBUG
 	m_pScene = std::make_unique<TitleScene>();

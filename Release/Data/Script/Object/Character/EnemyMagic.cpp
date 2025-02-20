@@ -60,6 +60,8 @@ namespace
 	constexpr float kKnockPow = 0.1f;
 
 	constexpr int kDeathTime = 60;
+
+	constexpr int kDamagePopTime = 30;
 }
 
 EnemyMagic::EnemyMagic()
@@ -232,27 +234,27 @@ bool EnemyMagic::SetDamagePoint(float damagePoint)
 		// 10以下で拡大値1.5
 	if (resDamagePoint < 10)
 	{
-		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 1.5f, 30, m_cameraDir);
+		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 1.5f, kDamagePopTime, m_cameraDir);
 	}
 	// 10以上で拡大値2.0
 	else if (resDamagePoint < 30)
 	{
-		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 2.0f, 30, m_cameraDir);
+		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 2.0f, kDamagePopTime, m_cameraDir);
 	}
 	// 30以上で拡大値2.5
 	else if (resDamagePoint < 50)
 	{
-		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 2.5f, 30, m_cameraDir);
+		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 2.5f, kDamagePopTime, m_cameraDir);
 	}
 	// 50以上で拡大値3.0
 	else if (resDamagePoint < 80)
 	{
-		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 3.0f, 30, m_cameraDir);
+		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 3.0f, kDamagePopTime, m_cameraDir);
 	}
 	// 80以上で拡大値3.5
 	else
 	{
-		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 3.5f, 30, m_cameraDir);
+		PanelManager::Instance().SetNumber(resDamagePoint, m_pos, 3.5f, kDamagePopTime, m_cameraDir);
 	}
 
 	// 一応HPのマイナス化防止とやられた判定をここでとる
@@ -268,7 +270,7 @@ bool EnemyMagic::SetDamagePoint(float damagePoint)
 		m_hitCol.isChackOther = false;
 	}
 
-	EffectManager::Instance().PlayEffect("HitM", m_pos, m_dir);
+	EffectManager::Instance().PlayEffect("HitM", m_collider.centerPos, m_dir);
 
 	return true;
 
@@ -389,7 +391,7 @@ void EnemyMagic::KnockBackUpdate()
 		{
 			m_collider.isOnDamage = true;
 			ChangeState(State::MOVE);
-			DrawingManager::Instance().CallAnimation(m_name, "Armature|Idle", 1);
+			DrawingManager::Instance().CallAnimation(m_name, "Armature|Idle", 120);
 		}
 	}
 }
